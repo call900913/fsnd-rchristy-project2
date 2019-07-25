@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <h1>Categories</h1>
+  {% for category in cats %}
+    <p><a href="/{{ category.id }}/models">{{ category.name }}</a></p>
+    <a href="/{{ category.id }}/edit">edit category name</a>
+    <br>
+    <a href="/{{ category.id }}/delete">delete category</a>
+  {% endfor %}
+  <br><br><br>
+  <a href="/categories/addnew">add a new category</a>
+{% endblock %}

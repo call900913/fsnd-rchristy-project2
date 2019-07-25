@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <p>Category: </p>
+  <form action="/{{ category_id }}/models/addnew" method="post" id="anmform">
+    <input type="text" name="name" placeholder="Name of the Model">
+    <br>
+    <textarea name="description" form="anmform" placeholder="description of the model"></textarea>
+    <br>
+    <input type="submit" value="Add Category">
+  </form>
+{% endblock %}

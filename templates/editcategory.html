@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <p>current category name: {{ catName }}</p>
+  <form action="/{{ category_id }}/edit" method="post">
+    <label for="catname">update category name: </label>
+    <input type="text" id="catname" name="name" placeholder="Name of the Category">
+    <input type="submit" value="Update">
+  </form>
+{% endblock %}

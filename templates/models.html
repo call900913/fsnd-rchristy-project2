@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <h1>{{ catName }}</h1>
+  {% for model in models %}
+    <h2>Model name: {{ model.name }}</h2>
+    <p>Description: {{ model.description }}</p>
+    <br>
+    <a href="/{{ category_id }}/{{ model.id }}/edit">edit model information</a>
+    <br>
+    <a href="/{{ category_id }}/{{ model.id }}/delete">delete model</a>
+  {% endfor %}
+  <br><br><br>
+  <a href="/{{ category_id }}/models/addnew">add a new model</a>
+{% endblock %}
