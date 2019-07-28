@@ -2,9 +2,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+  <script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '208487103165-5ui6vb3gn4g5fi9qbetcqav03j850odq.apps.googleusercontent.com',
+          scope: 'openid'
+        });
+      });
+    }
+  </script>
   <title>Document</title>
 </head>
 <body>
   {% block body %}{% endblock %}
+  <div id="siresult"></div>
+  <script>
+    function signInCallBack(authResult) {
+      if (authResult['code']) {
+        $.ajax({
+          type: 'POST',
+          url: '/goog',
+          processData: false,
+          headers: {
+            'X-Requested-With':
+          },
+          contentType: 'application/octet-stream; charset=utf-8',
+          data: authResult['code'],
+          success: function(result) {
+            if (result) {
+              $('#siresult').html(result + 'redirecting...')
+              setTimeout(function() {
+                window.location.href = '/categories';
+              }, 3000);
+            } else if (authResult['error']) {
+              console.log('There was an error: ' + authResult['error']);
+            }
+          }
+        });
+      }
+      else {
+        $('#siresult').html('There was no response from google.');
+      }
+    }
+  </script>
 </body>
 </html>

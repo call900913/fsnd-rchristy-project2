@@ -6,4 +6,17 @@
     <input type="password" name="password" placeholder="Your Password">
     <input type="submit" value="submit">
   </form>
+  <div class="oauth-providers">
+    <button id="googbutton" class="oauth-providers__ga">
+      Sign in with Google
+    </button>
+    <script>
+      $('#googbutton').click(function() {
+        auth2.grantOfflineAccess().then(signInCallBack)s;
+      });
+    </script>
+    <button class="oauth-providers__fb">
+      Sign in with Facebook
+    </button>
+  </div>
 {% endblock %}
