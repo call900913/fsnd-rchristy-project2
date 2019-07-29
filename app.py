@@ -6,6 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Model
 
+import httplib2
+from oauth2client import client
+
+
 from decorators import login_required, initial_categories
 # hey flask, give me a web app
 # turn this file app.py into a weeb app
@@ -167,6 +171,37 @@ def editModel(model_id, category_id):
 def catJSON():
     categories = db.query(Category).filter_by(user_id=0).all()
     return jsonify(cats=[cat.serialize for cat in categories])
+
+
+@app.route('/goog', methods=["POST"])
+def googSignIn():
+    if not request.headers.get('X-Requested-With'):
+        abort(403)
+    CLIENT_SECRET = 'client_secret.json'
+
+    auth_code = request.data
+
+    credentials = client.credentials_from_clientsecrets_and_code(
+      CLIENT_SECRET, ['https://www.googleapis.com/auth/drive.appdata', 'profile', 'email'], auth_code
+    )
+
+    credentials.authorize(httplib2.Http())
+
+    email = credentials.id_token['email']
+    user = db.query(User).filter_by(email=email).first()
+
+    if not (user):
+        name = credentials.id_token['name']
+        password = generate_password_hash(credentials.id_token['sub'])
+        newUser = User(name=name, email=email, password=password)
+        db.add(newUser)
+        db.commit()
+        newuser = db.query(User).filter_by(email=email).first()
+        session['user_id'] = newuser.id
+    else:
+        session['user_id'] = user.id
+    return redirect(url_for('displayCategories'))
+    # return 'Hello'
 
 
 
