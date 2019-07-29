@@ -8,7 +8,7 @@
     function start() {
       gapi.load('auth2', function() {
         auth2 = gapi.auth2.init({
-          client_id: '208487103165-5ui6vb3gn4g5fi9qbetcqav03j850odq.apps.googleusercontent.com',
+          client_id: '208487103165-5i8igekkrgeio584fpk9dqlndg0o9jlm.apps.googleusercontent.com',
           scope: 'openid'
         });
       });
@@ -27,13 +27,13 @@
           url: '/goog',
           processData: false,
           headers: {
-            'X-Requested-With':
+            'X-Requested-With': 'XMLHttpRequest'
           },
           contentType: 'application/octet-stream; charset=utf-8',
           data: authResult['code'],
           success: function(result) {
             if (result) {
-              $('#siresult').html(result + 'redirecting...')
+              $('#siresult').html('redirecting...')
               setTimeout(function() {
                 window.location.href = '/categories';
               }, 3000);
