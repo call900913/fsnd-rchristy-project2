@@ -29,7 +29,7 @@ On your Command Line, navigate to that directory, and run `vagrant init`.
 Follow these steps to get load the web app on your local machine:
 
 1. Clone the project into the folder discussed in the previous section.
-One way of doing this is by visiting this site: []() and clicking on the green `clone or download` button.
+One way of doing this is by visiting this url: [https://github.com/call900913/fsnd-rchristy-project2](https://github.com/call900913/fsnd-rchristy-project2) and clicking on the green `clone or download` button.
 Download the project into the aforementioned folder.
 
 2. Navigate to that folder and run `vagrant up`.
