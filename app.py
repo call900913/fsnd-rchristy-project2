@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Model
 
-import httplib2
+import httplib2, json
 from oauth2client import client
 
 
@@ -201,8 +201,33 @@ def googSignIn():
     else:
         session['user_id'] = user.id
     return redirect(url_for('displayCategories'))
-    # return 'Hello'
 
+
+@app.route('/fbconnect', methods=["POST"])
+def fbSignIn():
+    if not (request.headers.get('X-Requested-With')):
+        abort(403)
+
+    access_token = request.data
+    url = 'https://graph.facebook.com/v4.0/me?access_token=%s&fields=id,name,email' % access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    data = json.loads(result)
+    email = data['email']
+    user = db.query(User).filter_by(email=email).first()
+
+    if not (user):
+        name = data['name']
+        password = generate_password_hash(data['id'])
+        newUser = User(name=name, email=email, password=password)
+        db.add(newUser)
+        db.commit()
+        newuser = db.query(User).filter_by(email=email).first()
+        session['user_id'] = newuser.id
+    else:
+        session['user_id'] = user.id
+    return redirect(url_for('displayCategories'))
+    # url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
 
 
 if __name__ == '__main__':
