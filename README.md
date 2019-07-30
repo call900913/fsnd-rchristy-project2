@@ -26,23 +26,29 @@ On your Command Line, navigate to that directory, and run `vagrant init`.
 
 ## Next Steps (after Vagrant installation)
 
-Follow these steps to get load the web app on your local machine:
+Please go over these steps to load the web app on your local machine
+(lest the web app may not function properly):
+
 
 1. Clone the project into the folder discussed in the previous section.
 One way of doing this is by visiting this url: [https://github.com/call900913/fsnd-rchristy-project2](https://github.com/call900913/fsnd-rchristy-project2) and clicking on the green `clone or download` button.
 Download the project into the aforementioned folder.
 
-2. Navigate to that folder and run `vagrant up`.
+2. Navigate to that folder, and type `python database_setup.py` and hit enter.
 
-3. After the completion of the previous step, run `vagrant ssh`.
+3. After running `python database_setup.py`, run `python addfirstuser.py`.
 
-4. When the Linux terminal has loaded, type `cd /vagrant`.
+4. Still in the same folder and run `vagrant up`.
 
-5. Then, type `ls` and find the project directory -- `cd` into that directory.
+5. After the completion of the previous step, run `vagrant ssh`.
 
-6. In the project root directory, on your Command Line type `python app.py` and hit enter.
+6. When the Linux terminal has loaded, type `cd /vagrant`.
 
-7. Open a web browser and type in `http://localhost:5000` in the browser's address bar.
+7. Then, type `ls` and find the project directory -- `cd` into that directory.
+
+8. In the project root directory, on your Command Line type `python app.py` and hit enter.
+
+9. Open a web browser and type in `http://localhost:5000` in the browser's address bar.
 
 
 ## JSON endpoint
