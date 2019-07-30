@@ -1,11 +1,15 @@
 {% extends "baselayout.html" %}
 
 {% block body %}
+  <h1>Log In with your Username</h1>
   <form action="/login" method="post">
     <input type="text" name="email" placeholder="name@email.com">
     <input type="password" name="password" placeholder="Your Password">
     <input type="submit" value="submit">
   </form>
+  <br>
+  <br>
+  <h1>Or Log In with One of the Following: </h1>
   <div class="oauth-providers">
     <button id="googbutton" class="oauth-providers__ga">
       Sign in with Google
@@ -16,7 +20,12 @@
       });
     </script>
     <button class="oauth-providers__fb">
-      Sign in with Facebook
+      <fb:login-button scope="public_profile, email" onlogin="sendTokenToServer();">
+       Sign in with Facebook
+      </fb:login-button>
     </button>
   </div>
+  <br>
+  <br>
+  <h1>Not yet a member? Click <a href="/signup">here</a> to sign up. </h1>
 {% endblock %}
