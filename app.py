@@ -1,14 +1,16 @@
+""" Run this File to begin the app. """
+
 import json
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from flask import flash, session, abort
+from flask import session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Model
 
-from oauth2client import client
-
 from decorators import login_required, initial_categories
+
+from oauth2client import client
 
 import httplib2
 
@@ -24,6 +26,7 @@ db = DBSession()
 @app.route('/')
 @app.route('/login', methods=["GET", "POST"])
 def landing():
+    """ handles the login page """
     if request.method == "POST":
         email = request.form.get("email")
         submitted_password = request.form.get("password")
@@ -33,7 +36,6 @@ def landing():
                 session['user_id'] = user.id
                 return redirect(url_for('displayCategories'))
         else:
-            # flash('Try again')
             return redirect(url_for('signUp'))
     else:
         return render_template('login.html')
@@ -41,12 +43,14 @@ def landing():
 
 @app.route('/logout', methods=["GET"])
 def logout():
+    """ log out the user """
     session.clear()
     return redirect(url_for('landing'))
 
 
 @app.route('/signup', methods=["GET", "POST"])
 def signUp():
+    """ add a new user into the Database """
     if request.method == "POST":
         name = request.form.get('name')
         email = request.form.get('email')
@@ -65,6 +69,7 @@ def signUp():
 @app.route('/categories')
 @login_required
 def displayCategories():
+    """ List the category """
     user_id = session['user_id']
     cats = db.query(Category).filter_by(user_id=user_id).all()
     return render_template('categories.html', cats=cats)
@@ -73,6 +78,7 @@ def displayCategories():
 @app.route('/categories/addnew', methods=["GET", "POST"])
 @login_required
 def addNewCategory():
+    """ Add a new category (C in CRUD) """
     if request.method == "POST":
         name = request.form.get('name')
         user_id = session['user_id']
@@ -87,6 +93,7 @@ def addNewCategory():
 @app.route('/<int:category_id>/edit', methods=["GET", "POST"])
 @login_required
 def editCategory(category_id):
+    """ Edit a category (U in CRUD) """
     cat = db.query(Category).filter_by(id=category_id).one()
     if request.method == "POST":
         updatedCatName = request.form.get('name')
@@ -103,6 +110,7 @@ def editCategory(category_id):
 @app.route('/<int:category_id>/delete', methods=["GET"])
 @login_required
 def deleteCategory(category_id):
+    """ Delete a category (D in CRUD) """
     db.delete(db.query(Category).filter_by(id=category_id).first())
     db.commit()
     return redirect(url_for('displayCategories'))
@@ -111,6 +119,7 @@ def deleteCategory(category_id):
 @app.route('/<int:category_id>/models', methods=["GET"])
 @login_required
 def showModels(category_id):
+    """ Display the list of models in a category (R in CRUD) """
     models = db.query(Model).filter_by(category_id=category_id).all()
     catName = db.query(Category).filter_by(id=category_id).one().name
     return render_template(
@@ -123,6 +132,7 @@ def showModels(category_id):
 @app.route('/<int:category_id>/models/addnew', methods=["GET", "POST"])
 @login_required
 def addNewModel(category_id):
+    """ Add a new model in a particular category (C in CRUD) """
     if request.method == "POST":
         name = request.form.get('name')
         user_id = session['user_id']
@@ -140,6 +150,7 @@ def addNewModel(category_id):
 @app.route('/<int:category_id>/<int:model_id>/delete', methods=["GET"])
 @login_required
 def deleteModel(model_id, category_id):
+    """ Delete a model in a category (D in CRUD) """
     db.delete(db.query(Model).filter_by(id=model_id).first())
     db.commit()
     return redirect(url_for('showModels', category_id=category_id))
@@ -148,6 +159,7 @@ def deleteModel(model_id, category_id):
 @app.route('/<int:category_id>/<int:model_id>/edit', methods=["GET", "POST"])
 @login_required
 def editModel(model_id, category_id):
+    """ Edit a model in a category (U in CRUD) """
     mod = db.query(Model).filter_by(id=model_id).one()
     if request.method == "POST":
         updatedModName = request.form.get('name')
@@ -166,12 +178,14 @@ def editModel(model_id, category_id):
 
 @app.route('/categories/JSON')
 def catJSON():
+    """ Provide the JSON endpoint """
     categories = db.query(Category).filter_by(user_id=0).all()
     return jsonify(cats=[cat.serialize for cat in categories])
 
 
 @app.route('/goog', methods=["POST"])
 def googSignIn():
+    """ This is the function to handle Google Sign-In """
     if not request.headers.get('X-Requested-With'):
         abort(403)
     CLIENT_SECRET = 'client_secret.json'
@@ -204,6 +218,7 @@ def googSignIn():
 
 @app.route('/fbconnect', methods=["POST"])
 def fbSignIn():
+    """ This is the function to handle Facebook Sign-In """
     if not request.headers.get('X-Requested-With'):
         abort(403)
 
