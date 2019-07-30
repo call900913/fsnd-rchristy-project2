@@ -1,19 +1,17 @@
-# givee me acceses to th elibrary
+import json
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from flask import flash, session
+from flask import flash, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Model
 
-import httplib2
-import json
 from oauth2client import client
 
-
 from decorators import login_required, initial_categories
-# hey flask, give me a web app
-# turn this file app.py into a weeb app
+
+import httplib2
+
 app = Flask(__name__)
 
 
@@ -30,8 +28,8 @@ def landing():
         email = request.form.get("email")
         submitted_password = request.form.get("password")
         user = db.query(User).filter_by(email=email).first()
-        if (user):
-            if (check_password_hash(user.password, submitted_password)):
+        if user:
+            if check_password_hash(user.password, submitted_password):
                 session['user_id'] = user.id
                 return redirect(url_for('displayCategories'))
         else:
@@ -191,7 +189,7 @@ def googSignIn():
     email = credentials.id_token['email']
     user = db.query(User).filter_by(email=email).first()
 
-    if not (user):
+    if not user:
         name = credentials.id_token['name']
         password = generate_password_hash(credentials.id_token['sub'])
         newUser = User(name=name, email=email, password=password)
@@ -206,7 +204,7 @@ def googSignIn():
 
 @app.route('/fbconnect', methods=["POST"])
 def fbSignIn():
-    if not (request.headers.get('X-Requested-With')):
+    if not request.headers.get('X-Requested-With'):
         abort(403)
 
     access_token = request.data
@@ -218,7 +216,7 @@ def fbSignIn():
     email = data['email']
     user = db.query(User).filter_by(email=email).first()
 
-    if not (user):
+    if not user:
         name = data['name']
         password = generate_password_hash(data['id'])
         newUser = User(name=name, email=email, password=password)

@@ -1,4 +1,7 @@
-import sys
+"""
+Run this Module to create the database.
+"""
+
 from sqlalchemy import Column, ForeignKey, Integer, String
 
 # this one we'll use n the configuration and class code

@@ -1,3 +1,7 @@
+"""
+This module populates the database with some inital data.
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

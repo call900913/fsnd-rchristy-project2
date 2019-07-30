@@ -1,9 +1,17 @@
-from flask import redirect, render_template, request, session
+"""
+In this Module are helper functions to aid the rest of the app.
+"""
+
 from functools import wraps
+from flask import redirect, session
 
 
 def login_required(f):
-    # https://flask.palletsprojects.com/en/1.0.x/patterns/viewdecorators/
+    """
+    Wrapper function for @login_required in app.py
+    Code is taken from:
+    https://flask.palletsprojects.com/en/1.0.x/patterns/viewdecorators/
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('user_id') is None:
@@ -13,6 +21,7 @@ def login_required(f):
 
 
 def initial_categories(Category, Model, db, user_id):
+    """ loads stock categories for the new user """
     models = {
         'Cars': ['Fiesta', 'Mustang', 'Taurus'],
         'SUVs': ['Escape', 'Edge', 'Explorer'],
