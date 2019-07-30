@@ -6,7 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Model
 
-import httplib2, json
+import httplib2
+import json
 from oauth2client import client
 
 
@@ -16,12 +17,10 @@ from decorators import login_required, initial_categories
 app = Flask(__name__)
 
 
-
 engine = create_engine('sqlite:///abc.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 db = DBSession()
-
 
 
 @app.route('/')
@@ -155,7 +154,7 @@ def editModel(model_id, category_id):
     if request.method == "POST":
         updatedModName = request.form.get('name')
         mod.name = updatedModName
-        updatedDesc =request.form.get('description')
+        updatedDesc = request.form.get('description')
         mod.description = updatedDesc
         return redirect(url_for('showModels', category_id=category_id))
     else:
@@ -182,7 +181,9 @@ def googSignIn():
     auth_code = request.data
 
     credentials = client.credentials_from_clientsecrets_and_code(
-      CLIENT_SECRET, ['https://www.googleapis.com/auth/drive.appdata', 'profile', 'email'], auth_code
+        CLIENT_SECRET,
+        ['https://www.googleapis.com/auth/drive.appdata', 'profile', 'email'],
+        auth_code
     )
 
     credentials.authorize(httplib2.Http())
@@ -209,7 +210,8 @@ def fbSignIn():
         abort(403)
 
     access_token = request.data
-    url = 'https://graph.facebook.com/v4.0/me?access_token=%s&fields=id,name,email' % access_token
+    url = 'https://graph.facebook.com/v4.0/me?access_token=%s&fields=id,\
+        name,email' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -227,13 +229,9 @@ def fbSignIn():
     else:
         session['user_id'] = user.id
     return redirect(url_for('displayCategories'))
-    # url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email' % token
 
 
 if __name__ == '__main__':
     app.secret_key = 'secret_key'
     app.debug = True
-    app.run(host = '0.0.0.0', port=5000)
-
-
-# return redirect(url_for())
+    app.run(host='0.0.0.0', port=5000)

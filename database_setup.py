@@ -1,16 +1,16 @@
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-#this one we'll use n the configuration and class code
+# this one we'll use n the configuration and class code
 from sqlalchemy.ext.declarative import declarative_base
 
 # create foreign key relationships -- used when we write the mapper
 from sqlalchemy.orm import relationship
 
-#used in the config code at the end of the file
+# used in the config code at the end of the file
 from sqlalchemy import create_engine
 
-#helps us gete steup whne we beign to writ eour class code
+# helps us get setup when we beign to write our class code
 Base = declarative_base()
 
 

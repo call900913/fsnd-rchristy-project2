@@ -1,15 +1,16 @@
-
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-# https://flask.palletsprojects.com/en/1.0.x/patterns/viewdecorators/
+
 def login_required(f):
+    # https://flask.palletsprojects.com/en/1.0.x/patterns/viewdecorators/
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('user_id') is None:
             return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
+
 
 def initial_categories(Category, Model, db, user_id):
     models = {
@@ -33,7 +34,3 @@ def initial_categories(Category, Model, db, user_id):
                 description='')
             db.add(newModel)
             db.commit()
-
-
-
-#each user has his own set of categories here
