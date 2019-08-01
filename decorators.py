@@ -1,5 +1,7 @@
 """
-In this Module are helper functions to aid the rest of the app.
+In this Module are helper functions to aid the rest of the app,
+    including the @login_required decorator which
+    checks whether the user is logged in before entering a certain page.
 """
 
 from functools import wraps
