@@ -4,9 +4,13 @@
   <p>current model: (insert some name here)</p>
   <form action="/{{ category_id }}/{{ model_id }}/edit" method="post" id="anmform">
     <label for="modname">update model name: </label>
+    <p>*If you click on the update button with a blank field for the
+      model name, the name of the model will not be changed.</p>
     <input type="text" id="modname" name="name" placeholder="new model name">
     <label for="desc">update description: </label>
-    <textarea id="desc" name="description" form="anmform" placeholder="current description: "></textarea>
+    <textarea
+      id="desc" name="description" form="anmform"
+      placeholder="current description: {{ curDesc }}"></textarea>
     <input type="submit" value="Update">
   </form>
 {% endblock %}

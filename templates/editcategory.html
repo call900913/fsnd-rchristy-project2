@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 
 {% block body %}
-  <p>current category name: {{ catName }}</p>
+  <p>current category name: <strong>{{ catName }}</strong></p>
   <form action="/{{ category_id }}/edit" method="post">
     <label for="catname">update category name: </label>
-    <input type="text" id="catname" name="name" placeholder="Name of the Category">
+    <p>*If you click on the update button with a blank field for the
+      category name, the category name will not be changed.</p>
+    <input
+      type="text" id="catname" name="name" placeholder="Name of the Category">
     <input type="submit" value="Update">
   </form>
 {% endblock %}
