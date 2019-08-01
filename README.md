@@ -46,7 +46,7 @@ Download the project into the aforementioned folder.
 
 7. When the Linux terminal has loaded, type `cd /vagrant`.
 
-8. Then, type `ls` and find the project directory -- `cd` into that directory.
+8. Then, type `ls` and find the project directory; `cd` into that directory.
 
 9. In the project root directory, on your Command Line type `python app.py` and hit enter.
 
@@ -56,6 +56,7 @@ Download the project into the aforementioned folder.
 ## JSON endpoint
 
 The web app features a `JSON endpoint` which can be found here: `http://localhost:5000/categories/JSON`.
+
 For the models, the JSON endpoint can be found at `http://localhost:5000/<category_id>/models/JSON`.
 
 Cheers!
