@@ -54,5 +54,14 @@ class Model(Base):
     category = relationship(Category)
     user = relationship(User)
 
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'category': category.name,
+            'id': self.id,
+            'name': self.name
+        }
+
 engine = create_engine('sqlite:///abc.db')
 Base.metadata.create_all(engine)
