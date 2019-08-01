@@ -34,25 +34,28 @@ Please go over these steps to load the web app on your local machine
 One way of doing this is by visiting this url: [https://github.com/call900913/fsnd-rchristy-project2](https://github.com/call900913/fsnd-rchristy-project2) and clicking on the green `clone or download` button.
 Download the project into the aforementioned folder.
 
-2. Navigate to that folder, and type `python database_setup.py` and hit enter.
+2. Navigate to that folder, and type `pip install -r requirements.txt`.
 
-3. After running `python database_setup.py`, run `python addfirstuser.py`.
+3. Type `python database_setup.py` and hit enter.
 
-4. Still in the same folder and run `vagrant up`.
+4. After running `python database_setup.py`, run `python addfirstuser.py`.
 
-5. After the completion of the previous step, run `vagrant ssh`.
+5. Still in the same folder and run `vagrant up`.
 
-6. When the Linux terminal has loaded, type `cd /vagrant`.
+6. After the completion of the previous step, run `vagrant ssh`.
 
-7. Then, type `ls` and find the project directory -- `cd` into that directory.
+7. When the Linux terminal has loaded, type `cd /vagrant`.
 
-8. In the project root directory, on your Command Line type `python app.py` and hit enter.
+8. Then, type `ls` and find the project directory -- `cd` into that directory.
 
-9. Open a web browser and type in `http://localhost:5000` in the browser's address bar.
+9. In the project root directory, on your Command Line type `python app.py` and hit enter.
+
+10. Open a web browser and type in `http://localhost:5000` in the browser's address bar.
 
 
 ## JSON endpoint
 
 The web app features a `JSON endpoint` which can be found here: `http://localhost:5000/categories/JSON`.
+For the models, the JSON endpoint can be found at `http://localhost:5000/<category_id>/models/JSON`.
 
 Cheers!
