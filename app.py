@@ -2,7 +2,7 @@
 
 import json
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from flask import session, abort
+from flask import flash, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -30,6 +30,12 @@ def landing():
     if request.method == "POST":
         email = request.form.get("email")
         submitted_password = request.form.get("password")
+        email_check = email.replace(' ', '')
+        pw_check = submitted_password.replace(' ', '')
+        if email_check == '' or pw_check == '':
+            flash('Please enter a valid value for \
+                the email and password fields.')
+            return render_template('login.html')
         user = db.query(User).filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, submitted_password):
@@ -54,7 +60,22 @@ def signUp():
     if request.method == "POST":
         name = request.form.get('name')
         email = request.form.get('email')
-        password = generate_password_hash(request.form.get('password'))
+        pw = request.form.get('password')
+        pwc = request.form.get('passwordc')
+        name_check = name.replace(' ', '')
+        email_check = email.replace(' ', '')
+        pw_check = pw.replace(' ', '')
+        pwc_check = pwc.replace(' ', '')
+        if \
+          name_check == '' or email_check == '' or \
+          pw_check == '' or pwc_check == '':
+            flash('Please fill in all the fields.')
+            return render_template('signup.html')
+        if pw != pwc:
+            flash('Please confirm the password by typing the same value \
+            in both password fields.')
+            return render_template('signup.html')
+        password = generate_password_hash(pw)
         newUser = User(name=name, email=email, password=password)
         db.add(newUser)
         db.commit()
@@ -81,6 +102,10 @@ def addNewCategory():
     """ Add a new category (C in CRUD) """
     if request.method == "POST":
         name = request.form.get('name')
+        name_check = name.replace(' ', '')
+        if name_check == '':
+            flash('Please add a name for the category.')
+            return render_template('addnewcategory.html')
         user_id = session['user_id']
         newCategory = Category(name=name, user_id=user_id)
         db.add(newCategory)
@@ -97,6 +122,9 @@ def editCategory(category_id):
     cat = db.query(Category).filter_by(id=category_id).one()
     if request.method == "POST":
         updatedCatName = request.form.get('name')
+        name_check = updatedCatName.replace(' ', '')
+        if name_check == '':
+            return redirect(url_for('displayCategories'))
         cat.name = updatedCatName
         return redirect(url_for('displayCategories'))
     else:
@@ -137,6 +165,10 @@ def addNewModel(category_id):
         name = request.form.get('name')
         user_id = session['user_id']
         description = request.form.get('description')
+        name_check = name.replace(' ', '')
+        if name_check == '':
+            flash('Please add a name for the model.')
+            return render_template('addnewmodel.html', category_id=category_id)
         newModel = Model(
             name=name, description=description,
             user_id=user_id, category_id=category_id)
@@ -161,8 +193,12 @@ def deleteModel(model_id, category_id):
 def editModel(model_id, category_id):
     """ Edit a model in a category (U in CRUD) """
     mod = db.query(Model).filter_by(id=model_id).one()
+    curDesc = mod.description
     if request.method == "POST":
         updatedModName = request.form.get('name')
+        name_check = updatedModName.replace(' ', '')
+        if name_check == '':
+            return redirect(url_for('showModels', category_id=category_id))
         mod.name = updatedModName
         updatedDesc = request.form.get('description')
         mod.description = updatedDesc
@@ -173,9 +209,11 @@ def editModel(model_id, category_id):
             'editmodel.html',
             category_id=category_id,
             modName=modName,
-            model_id=model_id)
+            model_id=model_id,
+            curDesc=curDesc)
 
 
+#---------JSON API Endpoints---------#
 @app.route('/categories/JSON')
 def catJSON():
     """ Provide the JSON endpoint """
@@ -183,6 +221,15 @@ def catJSON():
     return jsonify(cats=[cat.serialize for cat in categories])
 
 
+@app.route('/<int:category_id>/models/JSON')
+def modJSON(category_id):
+    """ JSON Endpoint for models in a category """
+    models = db.query(Model).filter_by(category_id=category_id).all()
+    return jsonify(mods=[mod.serialize for mod in models])
+#---------JSON API Endpoints---------end of section---------#
+
+
+#---------Oauth logins---------#
 @app.route('/goog', methods=["POST"])
 def googSignIn():
     """ This is the function to handle Google Sign-In """
@@ -242,9 +289,12 @@ def fbSignIn():
     else:
         session['user_id'] = user.id
     return redirect(url_for('displayCategories'))
-
+#---------Oauth logins--------end of section---------#
 
 if __name__ == '__main__':
     app.secret_key = 'secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
+
+
+# Addd some comments here.
