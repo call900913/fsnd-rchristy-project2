@@ -31,15 +31,15 @@ def initial_categories(Category, Model, db, user_id):
         'Hybrids': ['Fusion']
     }
     names = ['Cars', 'SUVs', 'Trucks', 'Hybrids']
-    for i in range(len(names)):
-        cat = Category(name=names[i], user_id=user_id)
+    for name in names:
+        cat = Category(name=name, user_id=user_id)
         db.add(cat)
         db.commit()
     categories = db.query(Category).filter_by(user_id=user_id).all()
     for category in categories:
-        for i in range(len(models[category.name])):
+        for name in models[category.name]:
             newModel = Model(
-                name=models[category.name][i],
+                name=name,
                 user_id=user_id,
                 category_id=category.id,
                 description='')
