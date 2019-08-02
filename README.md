@@ -71,7 +71,7 @@ vagrant ssh
 
 ## JSON endpoint
 
-The JSON endpoints can be found in their associated pages after logging in.
+The JSON endpoints can be found on their associated pages after logging in.
 
 
 Cheers!
