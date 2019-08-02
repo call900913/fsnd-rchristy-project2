@@ -1,0 +1,75 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Helvetica;
+  color: #505050;
+  line-height: 1.6;
+}
+
+.container {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.main__login {
+  margin-bottom: 3rem;
+}
+
+.oauth-providers {
+  display: flex;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+
+.oauth-providers__or {
+  margin-bottom: 1rem;
+  margin-left: 50%;
+  margin-right: 50%;
+  margin-top: 3rem;
+}
+
+.main__signup {
+  margin-top: 5rem;
+}
+
+.main__header {
+  font-size: 5rem;
+  font-weight: 300;
+  letter-spacing: 0.5rem;
+  margin-top: 5%;
+  text-transform: uppercase;
+  margin-bottom: 5rem;
+}
+
+.oauth-providers__fb,
+.oauth-providers__ga {
+  width: 20rem;
+  height: 5rem;
+}
+
+.oauth-providers__fb:hover,
+.oauth-providers__ga:hover,
+.submit_btn {
+  cursor: pointer;
+}
+
+.flash {
+  margin-top: 5%;
+  margin-left: 5%;
+  font-size: 2rem;
+}
