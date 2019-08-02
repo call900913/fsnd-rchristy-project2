@@ -6,13 +6,13 @@ from flask import flash, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, User, Category, Model
-
-from decorators import login_required, initial_categories
 
 from oauth2client import client
-
 import httplib2
+
+from database_setup import Base, User, Category, Model
+from decorators import login_required, initial_categories
+
 
 app = Flask(__name__)
 
@@ -41,10 +41,11 @@ def landing():
             if check_password_hash(user.password, submitted_password):
                 session['user_id'] = user.id
                 return redirect(url_for('displayCategories'))
-        else:
-            return redirect(url_for('signUp'))
-    else:
-        return render_template('login.html')
+        flash('\
+            The email you entered is not found in the database; \
+            please sign up!')
+        return redirect(url_for('signUp'))
+    return render_template('login.html')
 
 
 @app.route('/logout', methods=["GET"])
@@ -83,8 +84,7 @@ def signUp():
         session['user_id'] = user.id
         initial_categories(Category, Model, db, session['user_id'])
         return redirect(url_for('displayCategories'))
-    else:
-        return render_template('signup.html')
+    return render_template('signup.html')
 
 
 @app.route('/categories')
@@ -111,8 +111,7 @@ def addNewCategory():
         db.add(newCategory)
         db.commit()
         return redirect(url_for('displayCategories'))
-    else:
-        return render_template('addnewcategory.html')
+    return render_template('addnewcategory.html')
 
 
 @app.route('/<int:category_id>/edit', methods=["GET", "POST"])
@@ -120,6 +119,9 @@ def addNewCategory():
 def editCategory(category_id):
     """ Edit a category (U in CRUD) """
     cat = db.query(Category).filter_by(id=category_id).one()
+    if cat.user.id != session['user_id']:
+        flash('You are only authorized to edit the pages within your purview')
+        return redirect(url_for('displayCategories'))
     if request.method == "POST":
         updatedCatName = request.form.get('name')
         name_check = updatedCatName.replace(' ', '')
@@ -127,20 +129,22 @@ def editCategory(category_id):
             return redirect(url_for('displayCategories'))
         cat.name = updatedCatName
         return redirect(url_for('displayCategories'))
-    else:
-        catName = cat.name
-        return render_template(
-            'editcategory.html',
-            category_id=category_id,
-            catName=catName)
+    return render_template(
+        'editcategory.html',
+        category_id=category_id,
+        catName=cat.name)
 
 
 @app.route('/<int:category_id>/delete', methods=["GET"])
 @login_required
 def deleteCategory(category_id):
     """ Delete a category (D in CRUD) """
-    db.delete(db.query(Category).filter_by(id=category_id).first())
-    db.commit()
+    cat = db.query(Model).filter_by(id=category_id).one()
+    if cat.user.id != session['user_id']:
+        flash('You are only authorized to edit the pages within your purview')
+    else:
+        db.delete(cat)
+        db.commit()
     return redirect(url_for('displayCategories'))
 
 
@@ -175,16 +179,19 @@ def addNewModel(category_id):
         db.add(newModel)
         db.commit()
         return redirect(url_for('showModels', category_id=category_id))
-    else:
-        return render_template('addnewmodel.html', category_id=category_id)
+    return render_template('addnewmodel.html', category_id=category_id)
 
 
 @app.route('/<int:category_id>/<int:model_id>/delete', methods=["GET"])
 @login_required
 def deleteModel(model_id, category_id):
     """ Delete a model in a category (D in CRUD) """
-    db.delete(db.query(Model).filter_by(id=model_id).first())
-    db.commit()
+    mod = db.query(Model).filter_by(id=model_id).one()
+    if mod.user.id != session['user_id']:
+        flash('You are only authorized to edit the pages within your purview')
+    else:
+        db.delete(mod)
+        db.commit()
     return redirect(url_for('showModels', category_id=category_id))
 
 
@@ -194,6 +201,9 @@ def editModel(model_id, category_id):
     """ Edit a model in a category (U in CRUD) """
     mod = db.query(Model).filter_by(id=model_id).one()
     curDesc = mod.description
+    if mod.user.id != session['user_id']:
+        flash('You are only authorized to edit the pages within your purview')
+        return redirect(url_for('showModels', category_id=category_id))
     if request.method == "POST":
         updatedModName = request.form.get('name')
         name_check = updatedModName.replace(' ', '')
@@ -203,27 +213,58 @@ def editModel(model_id, category_id):
         updatedDesc = request.form.get('description')
         mod.description = updatedDesc
         return redirect(url_for('showModels', category_id=category_id))
-    else:
-        modName = mod.name
-        return render_template(
-            'editmodel.html',
-            category_id=category_id,
-            modName=modName,
-            model_id=model_id,
-            curDesc=curDesc)
+    return render_template(
+        'editmodel.html',
+        category_id=category_id,
+        modName=mod.name,
+        model_id=model_id,
+        curDesc=curDesc)
 
 
 #---------JSON API Endpoints---------#
 @app.route('/categories/JSON')
-def catJSON():
+def apiJSON():
     """ Provide the JSON endpoint """
     categories = db.query(Category).filter_by(user_id=0).all()
     return jsonify(cats=[cat.serialize for cat in categories])
 
 
+@app.route('/categories/api')
+def showCatJSON():
+    """
+    Redirects the User to the same page,
+    flashing the JSON Endpoint for the categories.
+    """
+    user_id = session['user_id']
+    cats = db.query(Category).filter_by(user_id=user_id).all()
+    flash('\
+        The JSON endpoint for your Categories: \
+        http://localhost:5000/%s/categories/JSON' % user_id)
+    return redirect(url_for('displayCategories', cats=cats, user_id=user_id))
+
+
+@app.route('/<int:category_id>/models/api')
+def showModJSON(category_id):
+    """
+    Redirects the User to the same page,
+    flashing the JSON Endpoint for the models in the category.
+    """
+    flash('\
+        The JSON endpoint for your models in this Category: \
+        http://localhost:5000/%s/models/JSON' % category_id)
+    return redirect(url_for('showModels', category_id=category_id))
+
+
+@app.route('/<int:user_id>/categories/JSON')
+def catJSON(user_id):
+    """ Provide the JSON endpoint """
+    categories = db.query(Category).filter_by(user_id=user_id).all()
+    return jsonify(cats=[cat.serialize for cat in categories])
+
+
 @app.route('/<int:category_id>/models/JSON')
 def modJSON(category_id):
-    """ JSON Endpoint for models in a category """
+    """ Provide the JSON Endpoint for models in a category """
     models = db.query(Model).filter_by(category_id=category_id).all()
     return jsonify(mods=[mod.serialize for mod in models])
 #---------JSON API Endpoints---------end of section---------#
