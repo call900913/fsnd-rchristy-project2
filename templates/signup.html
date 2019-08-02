@@ -1,8 +1,26 @@
-{% extends "baselayout.html" %}
-
-{% block body %}
-  <h1>Sign Up Today</h1>
-  <form action="/signup" method="post">
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <title>Catalog Sign Up</title>
+</head>
+<body>
+  <div class="flash">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+  <h1 style="margin-bottom: 2rem; margin-left: 5%; margin-top: 5%; font-size: 2.5rem;">
+    Sign Up Today
+  </h1>
+  <form style="margin-bottom: 2rem; margin-left: 5%; margin-top: 4rem;" action="/signup" method="post">
     <input type="text" name="name" placeholder="Your name" required>
     <input type="text" name="email" placeholder="name@email.com" required>
     <input
@@ -10,6 +28,11 @@
     <input
       type="password" name="passwordc"
       placeholder="Confirm Your Password" required>
-    <input type="submit" value="submit">
+    <input class="submit_btn" type="submit"" value="submit">
   </form>
-{% endblock %}
+  <br><br>
+  <p style="margin-bottom: 2rem; margin-left: 5%; font-size: 1.5rem;">
+    Click <a href="/login">here</a> to Login
+  </p>
+</body>
+</html>

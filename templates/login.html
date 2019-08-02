@@ -1,31 +1,34 @@
 {% extends "baselayout.html" %}
 
-{% block body %}
-  <h1>Log In with your Username</h1>
-  <form action="/login" method="post">
-    <input type="text" name="email" placeholder="name@email.com" required>
-    <input type="password" name="password" placeholder="Your Password" required>
-    <input type="submit" value="submit">
-  </form>
-  <br>
-  <br>
-  <h1>Or Log In with One of the Following: </h1>
-  <div class="oauth-providers">
-    <button id="googbutton" class="oauth-providers__ga">
-      Sign in with Google
-    </button>
-    <script>
-      $('#googbutton').click(function() {
-        auth2.grantOfflineAccess().then(signInCallBack);
-      });
-    </script>
-    <button class="oauth-providers__fb">
-      <fb:login-button scope="public_profile, email" onlogin="sendTokenToServer();">
-       Sign in with Facebook
-      </fb:login-button>
-    </button>
-  </div>
-  <br>
-  <br>
-  <h1>Not yet a member? Click <a href="/signup">here</a> to sign up. </h1>
+{% block main %}
+  <main class="container">
+    <h1 class="main__header">The Catalog</h1>
+    <h1 class="main__login">Log In with your Username</h1>
+    <form action="/login" method="post">
+      <input type="text" name="email" placeholder="name@email.com" required>
+      <input type="password" name="password" placeholder="Your Password" required>
+      <input class="submit_btn" type="submit"" value="submit">
+    </form>
+    <br>
+    <br>
+    <h1 class="oauth-providers__or">or</h1>
+    <div class="oauth-providers">
+      <button id="googbutton" class="oauth-providers__ga">
+        Sign in with Google
+      </button>
+      <script>
+        $('#googbutton').click(function() {
+          auth2.grantOfflineAccess().then(signInCallBack);
+        });
+      </script>
+      <button class="oauth-providers__fb">
+        <fb:login-button scope="public_profile, email" onlogin="sendTokenToServer();">
+         Sign in with Facebook
+        </fb:login-button>
+      </button>
+    </div>
+    <br>
+    <br>
+    <h1 class="main__signup">Not yet a member? Click <a href="/signup">here</a> to sign up. </h1>
+  </main>
 {% endblock %}
